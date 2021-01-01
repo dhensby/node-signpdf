@@ -13,6 +13,7 @@ const getAcroForm = pdfBuffer => {
   const acroFormPosition = pdfBuffer.lastIndexOf('/Type /AcroForm');
   const isAcroFormExists = acroFormPosition > -1;
   const data = {
+    SigFlags: 3,
     Fields: [],
     DR: {
       Font: {}
@@ -26,7 +27,8 @@ const getAcroForm = pdfBuffer => {
 
     const charsUntilIdEnd = 10;
     const acroFormIdEnd = acroFormPosition - charsUntilIdEnd; // Let's find AcroForm ID by trying to find the "\n" before the ID
-    // 12 is a enough space to find the "\n" (generally it's 2 or 3, but I'm giving a big space though)
+    // 12 is a enough space to find the "\n"
+    // (generally it's 2 or 3, but I'm giving a big space though)
 
     const maxAcroFormIdLength = 12;
     let foundAcroFormId = '';
@@ -52,6 +54,8 @@ const getAcroForm = pdfBuffer => {
     data.Fields = fieldIds;
     return new _pdfkitReferenceMock.default(acroFormId, data);
   }
+
+  return null;
 };
 
 var _default = getAcroForm;
