@@ -55,15 +55,12 @@ const createPdf = (params) => new Promise((resolve) => {
 
     if (requestParams.addSignaturePlaceholder) {
         // Externally (to PDFKit) add the signature placeholder.
-        const refs = pdfkitAddPlaceholder({
+        pdfkitAddPlaceholder({
             pdf,
             pdfBuffer: Buffer.from([pdf]),
             reason: 'I am the author',
             ...requestParams.placeholder,
         });
-        // Externally end the streams of the created objects.
-        // PDFKit doesn't know much about them, so it won't .end() them.
-        Object.keys(refs).forEach((key) => refs[key].end());
     }
 
     // Also end the PDFDocument stream.

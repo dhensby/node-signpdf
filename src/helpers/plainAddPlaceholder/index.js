@@ -45,6 +45,9 @@ const plainAddPlaceholder = ({
     const acroForm = getAcroForm(pdfBuffer);
     const addedReferences = new Map();
     const references = [];
+    const dictionary = new PDFKitReferenceMock(pageIndex, {
+        Annots: [],
+    });
 
     const pdfKitMock = {
         ref: (data) => {
@@ -58,14 +61,8 @@ const plainAddPlaceholder = ({
             return ref;
         },
         page: {
-            dictionary: new PDFKitReferenceMock(
-                pageIndex,
-                {
-                    data: {
-                        Annots: [],
-                    },
-                },
-            ),
+            annotations: {push(...args) { dictionary.data.Annots.push(...args); }},
+            dictionary,
         },
         _root: {
             data: {
@@ -77,26 +74,11 @@ const plainAddPlaceholder = ({
             this._acroform = {};
             const form = this.ref({
                 Fields: [],
-                NeedAppearances: true,
-                // eslint-disable-next-line no-underscore-dangle,no-new-wrappers
-                DA: new String('/0 Tf 0 g'),
                 DR: {
                     Font: {},
                 },
             });
             this._root.data.AcroForm = form;
-        },
-        formAnnotation(annotationName, type, x, y, w, h, opts) {
-            const ref = this.ref({
-                Type: 'Annot',
-                Subtype: 'Widget',
-                Rect: [x, y, w, h],
-                Border: [0, 0, 0],
-                F: 4,
-                ...opts,
-            });
-            this._root.data.AcroForm.data.Fields.push(ref);
-            return ref;
         },
     };
 
